@@ -59,4 +59,4 @@ jobs:
     # Step 4: Run linter
     - name: Run linter
       run: |
-        flake8 --max-line-length=88 .
+        flake8 --max-line-length=88 
