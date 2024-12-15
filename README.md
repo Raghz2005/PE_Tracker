@@ -12,19 +12,19 @@ The **Personal Expenses Tracker** is a Python-based web application built using 
 ## Project Structure
 personal_expenses_tracker/ 
 ├── app.py 
-# Main application script 
+### Main application script 
 ├── expenses.db 
-# SQLite database file 
+### SQLite database file 
 ├── static/ 
-# Folder for static files (CSS, JavaScript, images) 
+### Folder for static files (CSS, JavaScript, images) 
 ├── templates/ 
-# HTML templates for the app's frontend 
+### HTML templates for the app's frontend 
 ├── requirements.txt 
-# List of project dependencies 
+### List of project dependencies 
 ├── .gitignore 
-# Git configuration to exclude unnecessary files 
+### Git configuration to exclude unnecessary files 
 └── README.md 
-# Project documentation
+
 
 ## Prerequisites
 To run this application, you need:
