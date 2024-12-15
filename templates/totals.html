@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Total Expenses</title>
+    
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            text-align: center;
+            padding: 8px;
+        }
+        th {
+            background-color: #f4f4f4;
+            cursor: pointer;
+            position: relative;
+        }
+        th span {
+            margin-left: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            color: #666;
+        }
+        th span:hover {
+            color: black;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #ddd;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('add_expense') }}">Add Expense</a>
+        <a href="{{ url_for('totals') }}">Total Expenses</a>
+    </nav>
+    <h1>Total Expenses</h1>
+    <table id="totalsTable">
+        <thead>
+            <tr>
+                <th>
+                    Month
+                    <span onclick="sortTable(0, 'asc')">&#9650;</span> <!-- Ascending -->
+                    <span onclick="sortTable(0, 'desc')">&#9660;</span> <!-- Descending -->
+                </th>
+                {% for category in categories %}
+                <th>{{ category }}</th>
+                {% endfor %}
+                <th>Totals</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for month, category_totals in totals_data.items() %}
+            <tr>
+                <td>{{ month }}</td>
+                {% for category in categories %}
+                <td>{{ category_totals[category] }}</td>
+                {% endfor %}
+                <td>{{ totals_per_month[month] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        function sortTable(columnIndex, order) {
+            const table = document.getElementById("totalsTable");
+            const rows = Array.from(table.rows).slice(1); // Exclude header row
+
+            rows.sort((rowA, rowB) => {
+                const cellA = rowA.cells[columnIndex].innerText;
+                const cellB = rowB.cells[columnIndex].innerText;
+
+                // Sort by Month (Date)
+                let comparison = new Date(cellA) - new Date(cellB);
+
+                return order === 'asc' ? comparison : -comparison;
+            });
+
+            // Re-append sorted rows
+            rows.forEach(row => table.tBodies[0].appendChild(row));
+        }
+    </script>
+</body>
+</html>
+

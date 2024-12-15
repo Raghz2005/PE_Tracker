@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Expense Tracker</title>
+    
+    <link rel="stylesheet" href="/static/styles.css">
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin: 20px auto;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            text-align: center;
+            padding: 8px;
+        }
+        th {
+            background-color: #f4f4f4;
+            cursor: pointer;
+            position: relative;
+        }
+        th span {
+            margin-left: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            color: #666;
+        }
+        th span:hover {
+            color: black;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tr:hover {
+            background-color: #ddd;
+        }
+        button {
+            padding: 5px 10px;
+            margin: 5px;
+            border: none;
+            cursor: pointer;
+        }
+        .edit-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{{ url_for('index') }}">Home</a>
+        <a href="{{ url_for('add_expense') }}">Add Expense</a>
+        <a href="{{ url_for('totals') }}">Total Expenses</a>
+    </nav>
+    <h1>Expense Tracker</h1>
+    <table id="expensesTable">
+        <thead>
+            <tr>
+                <th onclick="sortTable(0)">Date <span id="sortIconDate">▲</span></th>
+                <th>Description</th>
+                <th>Category</th>
+                <th onclick="sortTable(3)">Amount <span id="sortIconAmount"></span></th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for expense in expenses %}
+            <tr>
+                <td>{{ expense[1] }}</td>
+                <td>{{ expense[2] }}</td>
+                <td>{{ expense[3] }}</td>
+                <td>{{ expense[4] }}</td>
+                <td>
+                    <button class="edit-btn" onclick="editRow(this)">Edit</button>
+                    <button class="delete-btn" onclick="deleteRow(this)">Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        function editRow(button) {
+            const row = button.closest('tr');
+            const cells = row.querySelectorAll('td:not(:last-child)'); // Exclude last cell (Actions)
+            
+            if (button.innerText === "Edit") {
+                // Enable editing
+                cells.forEach(cell => {
+                    const currentValue = cell.innerText;
+                    cell.innerHTML = `<input type="text" value="${currentValue}" />`;
+                });
+                button.innerText = "Save";
+            } else {
+                // Save changes
+                cells.forEach(cell => {
+                    const input = cell.querySelector('input');
+                    if (input) {
+                        cell.innerText = input.value; // Save input value to cell
+                    }
+                });
+                button.innerText = "Edit";
+            }
+        }
+
+        function deleteRow(button) {
+            const row = button.closest('tr');
+            row.remove(); // Remove the row from the DOM
+        }
+
+        let sortOrder = { 0: 'asc', 3: 'asc' };
+
+        function sortTable(columnIndex) {
+            const table = document.getElementById("expensesTable");
+            const rows = Array.from(table.rows).slice(1);
+
+            rows.sort((rowA, rowB) => {
+                const cellA = rowA.cells[columnIndex].innerText;
+                const cellB = rowB.cells[columnIndex].innerText;
+
+                let comparison;
+                if (columnIndex === 0) {
+                    comparison = new Date(cellA) - new Date(cellB);
+                } else if (columnIndex === 3) {
+                    comparison = parseFloat(cellA) - parseFloat(cellB);
+                } else {
+                    comparison = cellA.localeCompare(cellB);
+                }
+
+                return sortOrder[columnIndex] === 'asc' ? comparison : -comparison;
+            });
+
+            rows.forEach(row => table.tBodies[0].appendChild(row));
+            sortOrder[columnIndex] = sortOrder[columnIndex] === 'asc' ? 'desc' : 'asc';
+            updateSortIcons(columnIndex);
+        }
+
+        function updateSortIcons(columnIndex) {
+            const headers = document.querySelectorAll("th span");
+            headers.forEach((icon, index) => {
+                if (index === columnIndex) {
+                    icon.innerText = sortOrder[columnIndex] === 'asc' ? '▲' : '▼';
+                } else {
+                    icon.innerText = '';
+                }
+            });
+        }
+
+        window.onload = () => sortTable(0);
+    </script>
+</body>
+</html>
