@@ -11,6 +11,7 @@ The **Personal Expenses Tracker** is a Python-based web application built using 
 
 ## Project Structure
 personal_expenses_tracker/ 
+
 ├── app.py 
 ### Main application script 
 ├── expenses.db 
